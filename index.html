@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<div id="info">
+  <p id='v1' style='float : left'>
+    view1
+  </p>
+  <p id='v2' style='float : left'>
+    view2
+  </p>
+  <p id='v3' style='float : left'>
+    view3
+  </p>
+  <p id='v4' style='float : left'>
+    view4
+  </p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+</script>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<style>
+
+body {
+  overflow: hidden
+}
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+</style>
+</head>
+
+<body> 
+<script>
+
+$('#v1').click(
+  function() {
+    camera.position.set( 0, 1200, 700 );
+    camera.lookAt(new THREE.Vector3( 0, 0, 0 ));
+  }
+);
+
+$('#v2').click(
+
+  function() {
+    camera.position.set( -700, 1200, 0);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }
+);
+
+$('#v3').click(
+
+  function() {
+    camera.position.set( 0, 1200, -700);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }
+);
+
+$('#v4').click(
+
+  function() {
+    camera.position.set( 700, 1200, 0);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+  }
+);
+
+var camera, scene, renderer, controls;
+
+init();
+animate();
+
+function buildWall( kind, w, degree, x, z ){
+  switch( kind ){
+  	case 1:
+    	var geometry = new THREE.BoxGeometry( w, 350, 11);
+      var material = new THREE.MeshLambertMaterial( { color:0xffffff } );
+      var wall = new THREE.Mesh( geometry, material );
+    	break;
+    case 2:
+    	var geometry = new THREE.BoxGeometry( w, 350, 6);
+      var material = new THREE.MeshLambertMaterial( { color:0xffffff } );
+      var wall = new THREE.Mesh( geometry, material );
+    	break;
+  }
+  
+  wall.rotation.y = degree;
+  wall.position.set( x, 175, z );
+  
+  scene.add(wall);
+}
+
+function init() {
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+  camera.position.set( 0, 1200, 700);
+  camera.lookAt (new THREE.Vector3(0,0,0));
+  scene.add(camera);
+  
+  light = new THREE.PointLight(0xffffff);
+  light.position.set( 1200, 1000, 700);
+  scene.add(light);
+
+  var gridXZ = new THREE.GridHelper( 1200, 20, 'red', 'white');
+  scene.add(gridXZ);
+
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  document.body.appendChild(renderer.domElement);
+
+  /////////////////////////////////////////////////////////////////////
+  plane = new THREE.Mesh(new THREE.PlaneGeometry( 1000, 500), new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0.5,
+    visible: true
+  }));
+  scene.add(plane);
+  plane.rotation.x = -Math.PI / 2;
+  
+  //////////////////////////////////////////////////////////////////////
+  buildWall( 1, 1000, 0, 0, -244.5);
+  buildWall( 1, 1000, 0, 0, 244.5);
+  buildWall( 1, 500, Math.PI/2, 494.5, 0);
+  buildWall( 1, 390, Math.PI/2, -494.5, -55);
+  buildWall( 1, 25, Math.PI/2, -494.5, 237.5);
+  
+  buildWall( 2, 12, 0, -483, 85);
+  buildWall( 2, 267, 0, -286.5, 85);
+  buildWall( 2, 302, 0, 55, 85);
+  buildWall( 2, 227, 0, 375.5, 85);
+  
+  buildWall( 2, 321, Math.PI/2, 203, -78.5);
+  buildWall( 2, 12, Math.PI/2, -156, -233);
+  buildWall( 2, 250, Math.PI/2, -156, -43);
+  buildWall( 2, 74, Math.PI/2, 116, -15);
+  buildWall( 2, 353, 0, 23.5, -55);
+}
+
+function animate() {
+  controls.update();
+  requestAnimationFrame(animate);
+  render();
+}
+
+function render() {
+  renderer.render(scene, camera);
+}
+
+</script>
+</body>
+
+</html>
